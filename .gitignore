@@ -29,3 +29,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### other ###
+/out
+.DS_Store
+log/
+/.shelf
+/.gradle
+/gradle.properties
