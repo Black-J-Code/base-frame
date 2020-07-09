@@ -71,6 +71,8 @@ public class MysqlCodeGenerator {
                 .setDataSource(dataSourceConfig)
                 .setStrategy(strategyConfig)
                 .setPackageInfo(packageConfig)
+                .setCfg(injectionConfig)
+                .setTemplate(templateConfig)
                 .setTemplateEngine(new FreemarkerTemplateEngine());
         //8、执行
         autoGenerator.execute();
@@ -96,19 +98,19 @@ public class MysqlCodeGenerator {
 //                return projectPath + "/src/main/resources/mapper/" + packageConfig.getModuleName() + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
         });
-        injectionConfig.setFileCreate(new IFileCreate() {
-            @Override
-            public boolean isCreate(ConfigBuilder configBuilder, FileType fileType, String filePath) {
-                // 判断自定义文件夹是否需要创建
-                checkDir("调用默认方法创建的目录，自定义目录用");
-                if (fileType == FileType.MAPPER) {
-                    // 已经生成 mapper 文件判断存在，不想重新生成返回 false
-                    return !new File(filePath).exists();
-                }
-                // 允许生成模板文件
-                return true;
-            }
-        });
+//        injectionConfig.setFileCreate(new IFileCreate() {
+//            @Override
+//            public boolean isCreate(ConfigBuilder configBuilder, FileType fileType, String filePath) {
+//                // 判断自定义文件夹是否需要创建
+//                checkDir("调用默认方法创建的目录，自定义目录用");
+//                if (fileType == FileType.MAPPER) {
+//                    // 已经生成 mapper 文件判断存在，不想重新生成返回 false
+//                    return !new File(filePath).exists();
+//                }
+//                // 允许生成模板文件
+//                return true;
+//            }
+//        });
         injectionConfig.setFileOutConfigList(focList);
         return injectionConfig;
     }
@@ -116,13 +118,15 @@ public class MysqlCodeGenerator {
     private static TemplateConfig createTemplateConfig() {
         TemplateConfig templateConfig = new TemplateConfig();
         // 配置自定义输出模板
-        //指定自定义模板路径，注意不要带上.ftl/.vm, 会根据使用的模板引擎自动识别
-        templateConfig.setEntity("templates/entity2.java")
-                .setService("")
-                .setServiceImpl("")
-                .setMapper("")
-                .setXml("")
-                .setController("");
+        // 指定自定义模板路径，注意不要带上.ftl/.vm, 会根据使用的模板引擎自动识别
+        // 不生成xml和controller文件
+        templateConfig.setXml(null)
+                .setController(null);
+//                .setEntity("templates/entity2.java")
+//                .setService("")
+//                .setServiceImpl("")
+//                .setMapper("")
+//                ;
         return templateConfig;
     }
 
@@ -188,7 +192,7 @@ public class MysqlCodeGenerator {
                 .setParent("com.aylaasia")
                 /*.setModuleName(scanner("父包模块名"))*/
                 .setEntity("pojo.dbo")
-                .setController("com/lyq/controller")
+                .setController("controller")
                 .setService("service")
                 .setServiceImpl("service.impl")
                 .setMapper("dao")
@@ -209,6 +213,17 @@ public class MysqlCodeGenerator {
                 .setPassword("lyqq1233")
                 // 数据库 schema name
                 .setSchemaName("lyq");
+//                .setTypeConvert(new MySqlTypeConvert() {
+//                    // 自定义数据库表字段类型转换【可选】
+//                    @Override
+//                    public IColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
+//                        System.out.println("转换类型：" + fieldType);
+//                        if (fieldType.toLowerCase().contains("tinyint")) {
+//                            return DbColumnType.INTEGER;
+//                        }
+//                        return super.processTypeConvert(globalConfig, fieldType);
+//                    }
+//                });
         return dataSourceConfig;
     }
 
@@ -243,7 +258,7 @@ public class MysqlCodeGenerator {
                 // service impl命名方式
                 .setServiceImplName("%sServiceImpl")
                 // mapper命名方式
-                .setMapperName("%sMapper");
+                .setMapperName("%sDao");
         return globalConfig;
     }
 

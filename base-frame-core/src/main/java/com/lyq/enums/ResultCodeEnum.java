@@ -18,7 +18,6 @@ public enum ResultCodeEnum {
     NULL_POINTER(false,20003,"空指针异常"),
     QUERY_FAILED(false, 30005, "查询数据库失败");
 
-
     // 响应是否成功
     private Boolean success;
     // 响应状态码
